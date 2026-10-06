@@ -139,6 +139,17 @@
       "interests": [],
       "created_at": "2026-09-16T10:55:26.431Z",
       "updated_at": "2026-09-16T10:55:26.431Z"
+    },
+    {
+      "id": 11,
+      "name": "Harsh",
+      "email": "harshlyadav8105@gmail.com",
+      "password": "$2a$08$ABmWHHmX.ZBMexYs7V6snO1bxmXWNJ8UHriFqv.xr./SUnii.K31i",
+      "role": "student",
+      "department": "Computer Science",
+      "year": "TYCS-B",
+      "phone": "+91 98765 43210",
+      "created_at": "2026-10-06T15:35:58.054Z"
     }
   ],
   "events": [
@@ -218,7 +229,8 @@
       "organizer_id": 1,
       "image": null,
       "created_at": "2026-09-16T10:18:26.495Z",
-      "updated_at": "2026-09-16T10:37:56.597Z"
+      "updated_at": "2026-09-16T10:37:56.597Z",
+      "registered_count": 1
     },
     {
       "id": 2,
@@ -376,6 +388,19 @@
       "ticket_id": "EH-2026-MUVKU3MV-P3",
       "qr_data": "{\"ticket\":\"EH-2026-MUVKU3MV-P3\",\"passNumber\":\"Pass #3\",\"event\":\"TechFest 2026 – Annual Tech Symposium\",\"venue\":\"Main Auditorium & Tech Block\",\"date\":\"2026-10-15\",\"attendee\":\"Arjun (Team Pass)\",\"email\":\"arjun@student.edu\"}",
       "registered_at": "2026-10-05T18:22:08.360Z"
+    },
+    {
+      "id": 8,
+      "event_id": 1,
+      "user_id": 11,
+      "attendee_name": "Harsh",
+      "email": "harshlyadav8105@gmail.com",
+      "pass_number": 1,
+      "status": "registered",
+      "payment_status": "free",
+      "ticket_id": "EH-2026-MUWUC960-P1",
+      "qr_data": "{\"ticket\":\"EH-2026-MUWUC960-P1\",\"passNumber\":\"Pass #1\",\"event\":\"TechFest 2026 – Annual Tech Symposium\",\"venue\":\"Main Auditorium & Tech Block\",\"date\":\"2026-10-15\",\"attendee\":\"Harsh\",\"email\":\"harshlyadav8105@gmail.com\"}",
+      "registered_at": "2026-10-06T15:35:58.057Z"
     }
   ],
   "feedback": [],
@@ -679,13 +704,33 @@
       "is_read": false,
       "event_id": null,
       "created_at": "2026-10-06T13:31:26.540Z"
+    },
+    {
+      "id": 31,
+      "user_id": 1,
+      "title": "Login Successful",
+      "message": "Welcome back, Admin User! You logged in at 6/10/2026, 8:36:24 pm.",
+      "type": "info",
+      "is_read": false,
+      "event_id": null,
+      "created_at": "2026-10-06T15:06:24.206Z"
+    },
+    {
+      "id": 32,
+      "user_id": 11,
+      "title": "Pass #1 Ready: TechFest 2026 – Annual Tech Symposium",
+      "message": "Your pass #1 (EH-2026-MUWUC960-P1) for TechFest 2026 – Annual Tech Symposium is ready.",
+      "type": "success",
+      "is_read": false,
+      "event_id": 1,
+      "created_at": "2026-10-06T15:35:58.058Z"
     }
   ],
   "_counters": {
-    "users": 10,
+    "users": 11,
     "events": 6,
-    "registrations": 7,
+    "registrations": 8,
     "feedback": 0,
-    "notifications": 30
+    "notifications": 32
   }
 }

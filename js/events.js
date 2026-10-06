@@ -399,6 +399,14 @@ async function handlePassRegSubmit(e) {
     closeModal('pass-reg-modal');
     showToast('success', 'Pass Generated!', res.message || 'Pass generated successfully!');
 
+    // If server returned updated user/token, save so user is actively authenticated
+    if (res.token && res.user) {
+      localStorage.setItem('eventhub_token', res.token);
+      localStorage.setItem('eventhub_user', JSON.stringify(res.user));
+      currentUser = res.user;
+      if (typeof updateSidebarUser === 'function') updateSidebarUser();
+    }
+
     // Refresh views
     if (typeof loadDashboard === 'function') loadDashboard();
     if (typeof loadMyRegistrations === 'function') loadMyRegistrations();
@@ -408,15 +416,17 @@ async function handlePassRegSubmit(e) {
     const pass = res.data;
     if (pass && typeof inspectPassModal === 'function') {
       const title = document.getElementById('prm-event-title')?.textContent || 'Event';
-      inspectPassModal(
-        pass.ticket_id,
-        title,
-        pass.attendee_name || attendeeName,
-        pass.email || email,
-        pass.pass_number || res.passNumber || 1,
-        'Campus Auditorium',
-        new Date().toISOString().split('T')[0]
-      );
+      setTimeout(() => {
+        inspectPassModal(
+          pass.ticket_id,
+          title,
+          pass.attendee_name || attendeeName,
+          pass.email || email,
+          pass.pass_number || res.passNumber || 1,
+          'Campus Auditorium',
+          new Date().toISOString().split('T')[0]
+        );
+      }, 250);
     }
   } catch (err) {
     errEl.textContent = err.message || 'Failed to generate pass';

@@ -345,23 +345,44 @@ async function handleMockRequest(method, path, body = {}) {
 
   // Registrations: Create (with Email & Password verification and Repeat Registration support)
   if (path === '/registrations' && method === 'POST') {
-    if (!currentUser) throw new Error('Please sign in to generate a pass');
     const eventId = typeof body === 'object' ? parseInt(body.event_id) : parseInt(body);
-    const event = mockDB.data.events.find(e => e.id === eventId);
+    const event = (mockDB.data.events || []).find(e => e.id === eventId) || mockDB.data.events[0];
     if (!event) throw new Error('Event not found');
 
-    // Count user's existing passes for this event to support repeat registrations
-    const userPasses = mockDB.data.registrations.filter(r => r.event_id === eventId && r.user_id === currentUser.id && r.status !== 'cancelled');
-    const passNumber = userPasses.length + 1;
+    const attendeeName = (body && body.attendee_name) ? body.attendee_name.trim() : (currentUser ? currentUser.name : 'Student Attendee');
+    const attendeeEmail = (body && body.email) ? body.email.trim().toLowerCase() : (currentUser ? currentUser.email : 'student@college.edu');
 
-    const attendeeName = (body && body.attendee_name) ? body.attendee_name : currentUser.name;
-    const attendeeEmail = (body && body.email) ? body.email : currentUser.email;
+    // Auto-create user if not found in mockDB
+    let user = mockDB.data.users.find(u => u.email.toLowerCase() === attendeeEmail);
+    if (!user) {
+      user = {
+        id: mockDB.nextId(),
+        name: attendeeName,
+        email: attendeeEmail,
+        role: 'student',
+        password: (body && body.password) ? body.password : 'student123',
+        department: 'Computer Science',
+        year: 'TYCS-B',
+        created_at: new Date().toISOString()
+      };
+      mockDB.data.users.push(user);
+    }
+
+    const effectiveUserId = user ? user.id : (currentUser ? currentUser.id : 1);
+
+    // Count user's existing passes for this event to support repeat registrations
+    const userPasses = (mockDB.data.registrations || []).filter(r =>
+      r.event_id === eventId &&
+      (r.user_id === effectiveUserId || (r.email && r.email.toLowerCase() === attendeeEmail)) &&
+      r.status !== 'cancelled'
+    );
+    const passNumber = userPasses.length + 1;
 
     const ticketId = 'EH-2026-' + Date.now().toString(36).toUpperCase() + '-P' + passNumber;
     const newReg = {
       id: mockDB.nextId(),
       event_id: eventId,
-      user_id: currentUser.id,
+      user_id: effectiveUserId,
       attendee_name: attendeeName,
       email: attendeeEmail,
       pass_number: passNumber,
@@ -372,7 +393,7 @@ async function handleMockRequest(method, path, body = {}) {
         ticket: ticketId,
         passNumber: `Pass #${passNumber}`,
         event: event.title,
-        venue: event.venue,
+        venue: event.venue || 'Campus Auditorium',
         date: event.date,
         attendee: attendeeName,
         email: attendeeEmail
@@ -384,7 +405,7 @@ async function handleMockRequest(method, path, body = {}) {
     event.registered_count = (event.registered_count || 0) + 1;
     mockDB.data.notifications.push({
       id: mockDB.nextId(),
-      user_id: currentUser.id,
+      user_id: effectiveUserId,
       title: `Pass #${passNumber} Ready: ${event.title}`,
       message: `Your pass #${passNumber} (${ticketId}) for ${event.title} is confirmed.`,
       type: 'success',
@@ -392,7 +413,14 @@ async function handleMockRequest(method, path, body = {}) {
       created_at: new Date().toISOString()
     });
     mockDB.save();
-    return { success: true, message: `Pass #${passNumber} generated successfully! You can register again for more passes.`, data: newReg, passNumber };
+    return {
+      success: true,
+      message: `Pass #${passNumber} generated successfully! You can register again for more passes.`,
+      data: newReg,
+      passNumber,
+      token: 'mock-jwt-token-' + effectiveUserId,
+      user
+    };
   }
 
   // Registrations: Update status (Admin toggle)
