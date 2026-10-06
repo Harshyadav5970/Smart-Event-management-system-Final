@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="EventHub" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>EventHub – Smart College Event & Fest Management System</title>
+  <meta name="description" content="EventHub is the ultimate platform for discovering, managing, and participating in college events, fests, workshops, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- App Shell -->
+  <div id="app">
+    <!-- Auth Modal -->
+    <div id="auth-overlay" class="auth-overlay active">
+      <div class="auth-container">
+        <!-- Login Form -->
+        <div id="login-panel" class="auth-panel active">
+          <div class="auth-brand">
+            <div class="brand-icon">🎓</div>
+            <h1>EventHub</h1>
+            <p>Smart College Event Management</p>
+          </div>
+          <div class="auth-tabs">
+            <button class="tab-btn active" onclick="showAuthTab('login')">Sign In</button>
+            <button class="tab-btn" onclick="showAuthTab('register')">Register</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Email Address</label>
+              <div class="input-icon">
+                <span class="icon">✉️</span>
+                <input type="email" id="login-email" placeholder="your@college.edu" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <div class="input-icon">
+                <span class="icon">🔒</span>
+                <input type="password" id="login-password" placeholder="••••••••" required />
+                <button type="button" class="toggle-pw" onclick="togglePassword('login-password')">👁</button>
+              </div>
+            </div>
+            <div id="login-error" class="form-error hidden"></div>
+            <button type="submit" class="btn-primary full-width" id="login-btn">
+              <span class="btn-text">Sign In</span>
+              <span class="btn-loader hidden">⏳</span>
+            </button>
+            <div class="auth-divider">
+              <span>Demo Credentials</span>
+            </div>
+            <div class="demo-creds">
+              <button type="button" class="demo-btn" onclick="fillDemo('admin@eventhub.edu','admin123')">
+                👑 Admin Login
+              </button>
+              <button type="button" class="demo-btn" onclick="fillDemo('arjun@student.edu','student123')">
+                🎓 Student Login
+              </button>
+            </div>
+          </form>
+
+          <!-- Register Form -->
+          <form id="register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="reg-name" placeholder="Your Name" required />
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="reg-email" placeholder="your@college.edu" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Department</label>
+                <select id="reg-dept">
+                  <option value="">Select Department</option>
+                  <option>Computer Science</option>
+                  <option>Electronics</option>
+                  <option>Mechanical</option>
+                  <option>Civil</option>
+                  <option>Chemical</option>
+                  <option>Information Technology</option>
+                  <option>MBA</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Year</label>
+                <select id="reg-year">
+                  <option value="">Select Year</option>
+                  <option>1st Year</option>
+                  <option>2nd Year</option>
+                  <option>3rd Year</option>
+                  <option>4th Year</option>
+                  <option>PG 1st Year</option>
+                  <option>PG 2nd Year</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="reg-phone" placeholder="+91 XXXXX XXXXX" />
+            </div>
+            <div class="form-group">
+              <label>Password *</label>
+              <div class="input-icon">
+                <span class="icon">🔒</span>
+                <input type="password" id="reg-password" placeholder="Min. 6 characters" required />
+                <button type="button" class="toggle-pw" onclick="togglePassword('reg-password')">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Confirm Password *</label>
+              <input type="password" id="reg-confirm" placeholder="Repeat password" required />
+            </div>
+            <div id="reg-error" class="form-error hidden"></div>
+            <button type="submit" class="btn-primary full-width" id="reg-btn">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-loader hidden">⏳</span>
+            </button>
+          </form>
+        </div>
+      </div>
+      <!-- Decorative Background -->
+      <div class="auth-bg">
+        <div class="auth-blob blob1"></div>
+        <div class="auth-blob blob2"></div>
+        <div class="auth-blob blob3"></div>
+        <div class="floating-icons">
+          <span>🎭</span><span>🎵</span><span>💻</span><span>🏆</span><span>🎨</span><span>🎤</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App (hidden until login) -->
+    <div id="main-app" class="hidden">
+      <!-- Sidebar Navigation -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-logo">🎓</div>
+          <div class="brand-text">
+            <span class="brand-name">EventHub</span>
+            <span class="brand-tagline">College Events</span>
+          </div>
+          <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Close sidebar">✕</button>
+        </div>
+
+        <div class="user-card">
+          <div class="user-avatar" id="sidebar-avatar">JD</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebar-name">User Name</span>
+            <span class="user-role" id="sidebar-role">Student</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section">
+            <span class="nav-label">Main</span>
+            <a href="#" class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+              <span class="nav-icon">🏠</span>
+              <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="events" onclick="navigate('events')">
+              <span class="nav-icon">📅</span>
+              <span>Browse Events</span>
+            </a>
+            <a href="#" class="nav-item" data-page="my-registrations" onclick="navigate('my-registrations')">
+              <span class="nav-icon">🎫</span>
+              <span>My Tickets</span>
+            </a>
+            <a href="#" class="nav-item" data-page="notifications" onclick="navigate('notifications')">
+              <span class="nav-icon">🔔</span>
+              <span>Notifications</span>
+              <span class="nav-badge" id="notif-badge" style="display:none">0</span>
+            </a>
+          </div>
+
+          <div class="nav-section admin-only hidden" id="admin-nav">
+            <span class="nav-label">Admin</span>
+            <a href="#" class="nav-item" data-page="admin-registrations" onclick="navigate('admin-registrations')">
+              <span class="nav-icon">📋</span>
+              <span>Registration Records</span>
+            </a>
+            <a href="#" class="nav-item" data-page="manage-events" onclick="navigate('manage-events')">
+              <span class="nav-icon">⚙️</span>
+              <span>Manage Events</span>
+            </a>
+            <a href="#" class="nav-item" data-page="users" onclick="navigate('users')">
+              <span class="nav-icon">👥</span>
+              <span>Users</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics" onclick="navigate('analytics')">
+              <span class="nav-icon">📊</span>
+              <span>Analytics</span>
+            </a>
+          </div>
+
+          <div class="nav-section">
+            <span class="nav-label">Account</span>
+            <a href="#" class="nav-item" data-page="profile" onclick="navigate('profile')">
+              <span class="nav-icon">👤</span>
+              <span>My Profile</span>
+            </a>
+            <a href="javascript:void(0)" class="nav-item logout-btn" onclick="handleLogout(event)">
+              <span class="nav-icon">🚪</span>
+              <span>Logout</span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+      <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+      <!-- Mobile Header -->
+      <header class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+        <span class="mobile-brand" onclick="navigate('dashboard')">🎓 EventHub</span>
+        <div class="mobile-header-right">
+          <div class="mobile-notif" onclick="navigate('notifications')" aria-label="Notifications">
+            🔔 <span class="notif-count" id="mobile-notif-count"></span>
+          </div>
+          <div class="mobile-user-avatar" id="mobile-user-avatar" onclick="navigate('profile')" title="My Profile">JD</div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Desktop Topbar (Figma / Linear style) -->
+        <header class="desktop-topbar">
+          <div class="desktop-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="desktop-search-input" placeholder="Search events, fests, hackathons..." onkeydown="handleDesktopSearch(event)" />
+            <kbd class="search-kbd">Ctrl+K</kbd>
+          </div>
+          <div class="desktop-topbar-right">
+            <button type="button" class="topbar-icon-btn" onclick="navigate('notifications')" aria-label="Notifications" title="Notifications">
+              🔔
+              <span class="topbar-badge" id="desktop-notif-badge" style="display:none">0</span>
+            </button>
+            <div class="desktop-user-pill" onclick="navigate('profile')" title="My Profile">
+              <div class="desktop-user-avatar" id="desktop-user-avatar">JD</div>
+              <div class="desktop-user-meta">
+                <span class="desktop-user-name" id="desktop-user-name">User Name</span>
+                <span class="desktop-user-status">
+                  <span class="status-dot-active"></span> Active
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Page: Dashboard -->
+        <div id="page-dashboard" class="page active">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="dashboard-greeting">Dashboard Overview</h1>
+              <p class="page-subtitle">Live events, registrations and college highlights</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-secondary" onclick="navigate('events')">Explore Events</button>
+            </div>
+          </div>
+
+          <!-- Stats Cards (with Figma-style SVG sparklines) -->
+          <!-- Stats Cards (Accurate Real-Time Database Metrics) -->
+          <div class="stats-grid" id="student-stats">
+            <div class="stat-card" onclick="navigate('events')" title="View all campus events" style="cursor:pointer">
+              <div class="stat-info">
+                <span class="stat-value" id="stat-total-events">6</span>
+                <span class="stat-label">Total Events</span>
+              </div>
+              <div class="stat-sparkline">
+                <svg viewBox="0 0 72 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 30 C 18 10, 36 28, 54 8 L 70 14" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card" onclick="navigate('my-registrations')" title="View my event registrations" style="cursor:pointer">
+              <div class="stat-info">
+                <span class="stat-value" id="stat-my-regs">1</span>
+                <span class="stat-label" id="stat-my-regs-label">My Registrations</span>
+              </div>
+              <div class="stat-sparkline">
+                <svg viewBox="0 0 72 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 28 C 20 28, 32 14, 52 20 L 70 6" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card" onclick="navigate('events')" title="View upcoming events" style="cursor:pointer">
+              <div class="stat-info">
+                <span class="stat-value" id="stat-upcoming">4</span>
+                <span class="stat-label" id="stat-upcoming-label">Upcoming Events</span>
+              </div>
+              <div class="stat-sparkline">
+                <svg viewBox="0 0 72 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 18 C 16 18, 34 32, 50 14 L 70 8" stroke="#34d399" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-card" onclick="navigate('my-registrations')" title="View my active entry tickets" style="cursor:pointer">
+              <div class="stat-info">
+                <span class="stat-value" id="stat-attended">1</span>
+                <span class="stat-label" id="stat-attended-label">Tickets Active</span>
+              </div>
+              <div class="stat-sparkline">
+                <svg viewBox="0 0 72 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 22 C 22 10, 38 24, 54 12 L 70 18" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Hero Banner (Campus Hackathon / Headline Showcase) -->
+          <div id="dashboard-hero-container"></div>
+
+          <!-- Featured Events -->
+          <section class="section">
+            <div class="section-header">
+              <h2>🌟 Featured Events</h2>
+              <a href="#" onclick="navigate('events')" class="see-all">See All →</a>
+            </div>
+            <div class="events-carousel" id="featured-events">
+              <div class="loading-spinner">Loading...</div>
+            </div>
+          </section>
+
+          <!-- Upcoming Events -->
+          <section class="section">
+            <div class="section-header">
+              <h2>📅 Upcoming Events</h2>
+              <a href="#" onclick="navigate('events')" class="see-all">View All →</a>
+            </div>
+            <div class="events-grid" id="upcoming-events">
+              <div class="loading-spinner">Loading...</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Page: Browse Events -->
+        <div id="page-events" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Browse Events</h1>
+              <p class="page-subtitle">Discover and register for amazing campus events</p>
+            </div>
+            <div class="header-actions admin-only hidden" id="create-event-btn-wrap">
+              <button class="btn-primary" onclick="openCreateEventModal()">+ Create Event</button>
+            </div>
+          </div>
+
+          <!-- Search & Filters -->
+          <div class="filter-bar">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input" placeholder="Search events..." oninput="debounceSearch()" />
+            </div>
+            <div class="filter-chips" id="category-filters">
+              <button class="chip active" data-cat="all" onclick="filterCategory(this,'all')">All</button>
+              <button class="chip" data-cat="technical" onclick="filterCategory(this,'technical')">💻 Technical</button>
+              <button class="chip" data-cat="cultural" onclick="filterCategory(this,'cultural')">🎭 Cultural</button>
+              <button class="chip" data-cat="sports" onclick="filterCategory(this,'sports')">⚽ Sports</button>
+              <button class="chip" data-cat="workshop" onclick="filterCategory(this,'workshop')">🛠 Workshop</button>
+              <button class="chip" data-cat="seminar" onclick="filterCategory(this,'seminar')">📢 Seminar</button>
+              <button class="chip" data-cat="fest" onclick="filterCategory(this,'fest')">🎉 Fest</button>
+            </div>
+            <div class="filter-chips">
+              <button class="chip active" data-status="all" onclick="filterStatus(this,'all')">All Status</button>
+              <button class="chip" data-status="upcoming" onclick="filterStatus(this,'upcoming')">Upcoming</button>
+              <button class="chip" data-status="ongoing" onclick="filterStatus(this,'ongoing')">Ongoing</button>
+              <button class="chip" data-status="completed" onclick="filterStatus(this,'completed')">Completed</button>
+            </div>
+          </div>
+
+          <div class="events-grid" id="all-events-list">
+            <div class="loading-spinner">Loading events...</div>
+          </div>
+        </div>
+
+        <!-- Page: My Registrations -->
+        <div id="page-my-registrations" class="page">
+          <div class="page-header">
+            <h1 class="page-title">🎫 My Tickets</h1>
+            <p class="page-subtitle">Your event registrations and tickets</p>
+          </div>
+          <div id="my-registrations-list" class="registrations-list">
+            <div class="loading-spinner">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Page: Notifications -->
+        <div id="page-notifications" class="page">
+          <div class="page-header">
+            <h1 class="page-title">🔔 Notifications</h1>
+            <button class="btn-secondary" onclick="markAllRead()">Mark All Read</button>
+          </div>
+          <div id="notifications-list" class="notifications-list">
+            <div class="loading-spinner">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Page: Registration Records (Admin) -->
+        <div id="page-admin-registrations" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">📋 Registration Records</h1>
+              <p class="page-subtitle">Campus-wide registration ledger, repeat passes, and attendee check-in management</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-secondary" onclick="exportRegistrationsCSV()">📥 Export CSV</button>
+            </div>
+          </div>
+          <div id="admin-registrations-container">
+            <div class="loading-spinner">Loading records...</div>
+          </div>
+        </div>
+
+        <!-- Page: Manage Events (Admin) -->
+        <div id="page-manage-events" class="page">
+          <div class="page-header">
+            <h1 class="page-title">⚙️ Manage Events</h1>
+            <button class="btn-primary" onclick="openCreateEventModal()">+ Create Event</button>
+          </div>
+          <div id="admin-events-list" class="admin-table-wrapper">
+            <div class="loading-spinner">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Page: Users (Admin) -->
+        <div id="page-users" class="page">
+          <div class="page-header">
+            <h1 class="page-title">👥 User Management</h1>
+          </div>
+          <div class="filter-bar">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="user-search" placeholder="Search users..." oninput="debounceUserSearch()" />
+            </div>
+            <div class="filter-chips">
+              <button class="chip active" onclick="filterUserRole(this,'')">All</button>
+              <button class="chip" onclick="filterUserRole(this,'student')">Students</button>
+              <button class="chip" onclick="filterUserRole(this,'organizer')">Organizers</button>
+              <button class="chip" onclick="filterUserRole(this,'admin')">Admins</button>
+            </div>
+          </div>
+          <div id="users-list" class="admin-table-wrapper">
+            <div class="loading-spinner">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Page: Analytics (Admin) -->
+        <div id="page-analytics" class="page">
+          <div class="page-header">
+            <h1 class="page-title">📊 Analytics Dashboard</h1>
+            <p class="page-subtitle">Platform insights and event performance</p>
+          </div>
+          <div id="analytics-content">
+            <div class="loading-spinner">Loading analytics...</div>
+          </div>
+        </div>
+
+        <!-- Page: Profile -->
+        <div id="page-profile" class="page">
+          <div class="page-header">
+            <h1 class="page-title">👤 My Profile</h1>
+            <div class="header-actions">
+              <button type="button" class="btn-danger btn-sm" onclick="handleLogout(event)">🚪 Logout</button>
+            </div>
+          </div>
+          <div id="profile-content">
+            <div class="loading-spinner">Loading...</div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Mobile Bottom Navigation Bar -->
+      <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <button type="button" class="bottom-nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+          <span class="bottom-nav-icon">🏠</span>
+          <span class="bottom-nav-label">Home</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-page="events" onclick="navigate('events')">
+          <span class="bottom-nav-icon">📅</span>
+          <span class="bottom-nav-label">Events</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-page="my-registrations" onclick="navigate('my-registrations')">
+          <span class="bottom-nav-icon">🎫</span>
+          <span class="bottom-nav-label">Tickets</span>
+        </button>
+        <button type="button" class="bottom-nav-item admin-only hidden" data-page="admin-registrations" onclick="navigate('admin-registrations')">
+          <span class="bottom-nav-icon">📋</span>
+          <span class="bottom-nav-label">Records</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-page="notifications" onclick="navigate('notifications')">
+          <span class="bottom-nav-icon">🔔</span>
+          <span class="bottom-nav-label">Alerts</span>
+          <span class="bottom-nav-badge" id="bottom-notif-badge" style="display:none">0</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-page="profile" onclick="navigate('profile')">
+          <span class="bottom-nav-icon">👤</span>
+          <span class="bottom-nav-label">Profile</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Event Detail Modal -->
+  <div id="event-modal" class="modal-overlay hidden">
+    <div class="modal large">
+      <button class="modal-close" onclick="closeModal('event-modal')">✕</button>
+      <div id="event-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Event Modal -->
+  <div id="create-event-modal" class="modal-overlay hidden">
+    <div class="modal large">
+      <button class="modal-close" onclick="closeModal('create-event-modal')">✕</button>
+      <div class="modal-header">
+        <h2 id="event-form-title">Create New Event</h2>
+      </div>
+      <form id="event-form" onsubmit="handleEventSubmit(event)" class="modal-body">
+        <input type="hidden" id="edit-event-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Event Title *</label>
+            <input type="text" id="ef-title" required placeholder="Amazing Event 2026" />
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="ef-category" required>
+              <option value="">Select Category</option>
+              <option value="technical">💻 Technical</option>
+              <option value="cultural">🎭 Cultural</option>
+              <option value="sports">⚽ Sports</option>
+              <option value="workshop">🛠 Workshop</option>
+              <option value="seminar">📢 Seminar</option>
+              <option value="fest">🎉 Fest</option>
+              <option value="other">🌐 Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea id="ef-description" required rows="3" placeholder="Describe your event..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="ef-date" required />
+          </div>
+          <div class="form-group">
+            <label>Start Time *</label>
+            <input type="time" id="ef-time" required />
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <input type="time" id="ef-end-time" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Venue *</label>
+            <input type="text" id="ef-venue" required placeholder="Auditorium, Block A..." />
+          </div>
+          <div class="form-group">
+            <label>Max Participants</label>
+            <input type="number" id="ef-max" value="100" min="1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Registration Deadline</label>
+            <input type="date" id="ef-deadline" />
+          </div>
+          <div class="form-group">
+            <label>Registration Fee (₹)</label>
+            <input type="number" id="ef-fee" value="0" min="0" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prize / Benefits</label>
+            <input type="text" id="ef-prize" placeholder="₹10,000 + Certificate" />
+          </div>
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <input type="text" id="ef-tags" placeholder="coding, hackathon, AI" />
+          </div>
+        </div>
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" id="ef-featured" />
+            <span>⭐ Feature this event on dashboard</span>
+          </label>
+        </div>
+        <div id="event-form-error" class="form-error hidden"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('create-event-modal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="event-submit-btn">Create Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Feedback Modal -->
+  <div id="feedback-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('feedback-modal')">✕</button>
+      <div class="modal-header">
+        <h2>📝 Submit Feedback</h2>
+      </div>
+      <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)" class="modal-body">
+        <input type="hidden" id="fb-event-id" />
+        <div class="form-group">
+          <label>Rating *</label>
+          <div class="star-rating" id="star-rating">
+            <span class="star" data-val="1" onclick="setRating(1)">★</span>
+            <span class="star" data-val="2" onclick="setRating(2)">★</span>
+            <span class="star" data-val="3" onclick="setRating(3)">★</span>
+            <span class="star" data-val="4" onclick="setRating(4)">★</span>
+            <span class="star" data-val="5" onclick="setRating(5)">★</span>
+          </div>
+          <input type="hidden" id="fb-rating" required />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fb-category">
+            <option value="general">General</option>
+            <option value="organization">Organization</option>
+            <option value="content">Content</option>
+            <option value="venue">Venue</option>
+            <option value="overall">Overall</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea id="fb-comment" rows="3" placeholder="Share your experience..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('feedback-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Feedback</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Email & Password Pass Generation Modal (Repeat Registrations Supported) -->
+  <div id="pass-reg-modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width:480px">
+      <button class="modal-close" onclick="closeModal('pass-reg-modal')">✕</button>
+      <div class="modal-header">
+        <div style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--primary);font-weight:700">Official Campus Gate Pass</div>
+        <h2 id="prm-event-title" style="margin:0.25rem 0 0.5rem;font-size:1.35rem">Event Title</h2>
+        <p style="font-size:0.85rem;color:var(--text-muted)">Authorize with your email & password to generate your official pass</p>
+      </div>
+      <form id="pass-reg-form" onsubmit="handlePassRegSubmit(event)" class="modal-body">
+        <div class="form-group">
+          <label>Attendee Full Name *</label>
+          <input type="text" id="prm-name" required placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label>Registered Email Address *</label>
+          <input type="email" id="prm-email" required placeholder="your.name@college.edu" />
+        </div>
+        <div class="form-group">
+          <label>Account Password *</label>
+          <div class="input-icon">
+            <span class="icon">🔒</span>
+            <input type="password" id="prm-password" required placeholder="Enter password to authorize pass" />
+            <button type="button" class="toggle-pw" onclick="togglePassword('prm-password')">👁</button>
+          </div>
+        </div>
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);padding:0.75rem 1rem;border-radius:10px;margin-bottom:1rem;font-size:0.82rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:0.5rem">
+          <span style="font-size:1.1rem">💡</span>
+          <span><strong>Multiple Registrations:</strong> You can register again and again to generate multiple passes (Pass #1, Pass #2, etc.) for yourself, friends, or team entries.</span>
+        </div>
+        <div id="prm-error" class="form-error hidden"></div>
+        <div class="modal-footer" style="padding:1rem 0 0">
+          <button type="button" class="btn-secondary" onclick="closeModal('pass-reg-modal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="prm-submit-btn">🎫 Authenticate & Generate Pass</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Loading Overlay -->
+  <div id="global-loader" class="global-loader hidden">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

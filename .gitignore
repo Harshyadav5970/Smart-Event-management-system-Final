@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production Build Artifacts
+dist/
+dist-ssr/
+client/dist/
+build/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor Directories & OS Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Scratch & Temporary Testing Scripts
+scratch/
+temp/
+*.zip
+*.tar.gz
